@@ -1,4 +1,5 @@
-#in
+#idndef LEXAR_H
+#define LEXAR_H
 
 #include<iostream>
 #include<fstream>
@@ -12,7 +13,7 @@ struct LexToc{
 };
 
 LexToc lexar(ifstream file){
-
+	
 	
 	
 	
