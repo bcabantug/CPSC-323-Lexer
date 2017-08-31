@@ -41,11 +41,11 @@ LexTok lexer(ifstream &file){//takes file reference
 			if (current.lexeme.compare("int") || current.lexeme.compare("real") || current.lexeme.compare("string")){ // check for type
 				current.token = "Type";
 			}
-			
+
 			else{//check for keyword
 				for (int i = 0; i < sizeof(keywords); i++){ //for loop to go through the array of keywords
 					if (current.lexeme.compare(keywords[i])){ //compares
-						current.token = "keyword"; //if it is, token is keyword and breaks from the loop
+						current.token = "Keyword"; //if it is, token is keyword and breaks from the loop
 						break;
 					}
 					//if not keyword or type, assigns it as identifier
@@ -58,7 +58,7 @@ LexTok lexer(ifstream &file){//takes file reference
 			//return current;
 		}
 
-		else if(isdigit(ch)){//check for intconst, realconst, or intconst.
+		else if (isdigit(ch)){//check for intconst, realconst, or intconst.
 			ch = file.peek(); //peeks at the next char
 			while (isdigit(ch)){
 				ch = file.get();
@@ -77,7 +77,7 @@ LexTok lexer(ifstream &file){//takes file reference
 					ch = file.get();
 					lexStr += ch;
 					ch = file.peek();
-					
+
 					while (isdigit(ch)){//recieves all the digits after the period
 						ch = file.get();
 						lexStr += ch;
@@ -85,9 +85,9 @@ LexTok lexer(ifstream &file){//takes file reference
 					}
 					current.lexeme = lexStr;
 					current.lexeme = "RealConst"; //sets the current lexeme as realCons
-					
+
 				}
-				
+
 				else{					//if not a realConst, returns the period and sets lexeme as IntConst
 					file.putback(ch);
 					current.lexeme = lexStr;
@@ -99,7 +99,7 @@ LexTok lexer(ifstream &file){//takes file reference
 		else if (ch = '"'){ //checking for strConstants or eof by first finding the opening quote
 			ch = file.peek(); //peeks ahead
 			while (ch != '"' && !file.eof()){ //while the next char is not the closing quotes and is not at the eof, get all the characters for the string constant
-				ch = file.get(); 
+				ch = file.get();
 				lexStr += ch;
 				ch = file.peek();
 			}
@@ -113,52 +113,76 @@ LexTok lexer(ifstream &file){//takes file reference
 				current.lexeme = "";
 				current.token = "eof";
 			}
+
+			//return current;
 		}
 
 		//fix this code to make sure the assignments get after peek to move buffer forward!
-		else if (ch == '=' || ch == '>' || ch == '<' ){ //check for relational operators
+		else if (ch == '=' || ch == '>' || ch == '<'){ //check for relational operators
 			if (ch == '='){ //check for equals
-				current.lexeme = "=";
+				current.lexeme = ch;
 				current.token = "RelOp";
 			}
 			else if (ch == '>'){ //check for greater than
 				ch = file.peek();
 				if (ch == '='){ //to check for greater than equal to
-					current.lexeme = ">=";
-					current.lexeme = "RelOp";
+					lexStr += ch;
+					ch = file.get();
+					lexStr += ch;
+					current.lexeme = lexStr;
+					current.token = "RelOp";
 				}
 				else{ //default
-					current.lexeme = ">";
-					current.lexeme = "RelOp";
+					lexStr += ch;
+					current.lexeme = lexStr;
+					current.token = "RelOp";
 				}
 			}
 			else if (ch == '<'){
 
 				ch = file.peek();
 				if (ch == '='){ //to check for greater than equal to
-					current.lexeme = "<=";
-					current.lexeme = "RelOp";
+					lexStr += ch;
+					ch = file.get();
+					lexStr += ch;
+					current.lexeme = lexStr;
+					current.token = "RelOp";
 				}
 				else if (ch == '>'){
-					current.lexeme = "<>";
-					current.lexeme = "RelOp";
+					lexStr += ch;
+					ch = file.get();
+					lexStr += ch;
+					current.lexeme = lexStr;
+					current.token = "RelOp";
 				}
 				else{ //default
-					current.lexeme = "<";
-					current.lexeme = "RelOp";
+					lexStr += ch;
+					current.lexeme = lexStr;
+					current.token = "RelOp";
 				}
-			
 
 			}
-		
-		
 		}
+		//check for normal operators
+		else if (ch == '.' || ch == ',' || ch == ';' || ch == ':' || ch == '(' || ch == ')' || ch == '+' || ch == '-' || ch == '*' || ch == '/'){ //check for operator list
+			lexStr += ch;
+			ch = file.peek();
+			if (lexStr.compare(":") && ch == '='){
+				lexStr += ch;
+				ch = file.get();
+			}
 
-
-
-	}
+			current.lexeme = lexStr;
+			current.token = "Operator";
+		}
+		//if not anything above, then it is an error
+		else{
+			current.lexeme = ch;
+			current.token = "error";
+		}
+		//returns the current lexeme token back to the program
+		return current;
+		}
 }
-
-
-
 #endif
+
