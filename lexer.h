@@ -2,15 +2,18 @@
 Brian Cabantug
 CPSC 323-85 - Fall 2017
 Program #1 - testing the lexer function
-Code tested using Visual Studio Enterprise 2015
+Code tested using Visual C++ 2013 (Visual C++ 12.0)
 */
 #ifndef LEXER_H //header file protectors
 #define LEXER_H
 
 //iostream, fstream in testlex.cpp
+#include<iostream>
+#include<fstream>
 #include<cctype> //used for isalpha, isdigit comparison
 #include<vector> //used for operator list
 
+using namespace std;
 
 //LexTok struct being passed to the program
 struct LexTok {
@@ -23,7 +26,7 @@ LexTok lexer(ifstream &file) {//takes file reference from function call
 
 	string keywords[] = { "program", "begin", "end", "function", "read", "write", "if", "elsif", "else", "while", "do", "until", "return" };
 	vector<string> keyword(keywords, keywords + sizeof(keywords) / sizeof(string));
-	//array of keywords for comparing 
+	//vector of keywords for comparing lexStr for keywords 
 
 	//variables to hold the string
 	string lexStr = "";
@@ -44,13 +47,13 @@ LexTok lexer(ifstream &file) {//takes file reference from function call
 			}
 			current.lexeme = lexStr; //assigns the string as the lexeme
 
-		    //checks for keyword, type, or identifier
+			//checks for keyword, type, or identifier
 			if (current.lexeme.compare("int") == 0 || current.lexeme.compare("real") == 0 || current.lexeme.compare("string") == 0) { // check for type
 				current.token = "Type";
 			}
-			
+
 			else {//check for keyword
-				for (int i = 0; i < keyword.size(); i++) { //for loop to go through the array of keywords
+				for (int i = 0; i < keyword.size(); i++) { //for loop to go through the vector of keywords
 					if (current.lexeme.compare(keyword[i]) == 0) { //compares the current lexeme to check if it is a keyword
 						current.token = "Keyword"; //if it is, token is keyword and breaks from the loop
 						break; //break the loop if found
@@ -67,10 +70,10 @@ LexTok lexer(ifstream &file) {//takes file reference from function call
 			ch = file.peek(); //peeks at the next char
 			while (isdigit(ch)) {	//continues to save any following digits to lexStr 
 				ch = file.get();
-				lexStr += ch;	
+				lexStr += ch;
 				ch = file.peek();
 			}
-			
+
 			current.lexeme = lexStr;
 			current.token = "IntConst"; //assumes first instance as an intconst
 
@@ -164,7 +167,7 @@ LexTok lexer(ifstream &file) {//takes file reference from function call
 			}
 		}
 		//check for normal operators list
-		else if (ch == '.' || ch == ',' || ch == ';' || ch == ':' || ch == '(' || ch == ')' || ch == '+' || ch == '-' || ch == '*' || ch == '/') { 																																   
+		else if (ch == '.' || ch == ',' || ch == ';' || ch == ':' || ch == '(' || ch == ')' || ch == '+' || ch == '-' || ch == '*' || ch == '/') {
 			ch = file.peek();//peeks ahead
 			if (lexStr.compare(":") == 0 && ch == '=') { //if  :=
 				ch = file.get(); //saves it to lexStr
