@@ -16,12 +16,12 @@ struct LexTok {
 
 LexTok lexer(ifstream &file) {//takes file reference
 
-	
+
 
 	string keywords[] = { "program", "begin", "end", "function", "read", "write", "if", "elsif", "else", "while", "do", "until", "return" };
 	//string type[] = { "int", "real", "string" };
 
-	vector<string> keyword(keywords, keywords + sizeof(keywords)/sizeof(string));
+	vector<string> keyword(keywords, keywords + sizeof(keywords) / sizeof(string));
 	//array of keywords to differentiate and compare for checking
 
 	string lexStr = "";
@@ -42,7 +42,7 @@ LexTok lexer(ifstream &file) {//takes file reference
 
 			current.lexeme = lexStr; //assigns the string as the lexeme
 
-			 //checks for keyword, type, or identifier
+			//checks for keyword, type, or identifier
 			if (current.lexeme.compare("int") == 0 || current.lexeme.compare("real") == 0 || current.lexeme.compare("string") == 0) { // check for type
 				current.token = "Type";
 			}
@@ -112,6 +112,7 @@ LexTok lexer(ifstream &file) {//takes file reference
 
 			//CHECK IF THIS IS THE RIGHT POSITION for checking eof
 			if (!file.eof()) { //assigns the end quote and lexeme as the strConstant
+				ch = file.get();
 				lexStr += ch;
 				current.lexeme = lexStr;
 				current.token = "StringConst";
@@ -124,7 +125,7 @@ LexTok lexer(ifstream &file) {//takes file reference
 			//return current;
 		}
 
-		//fix this code to make sure the assignments get after peek to move buffer forward!
+		//fix this code to make sure the assignments get after peek to move buffer forward! (fixed?)
 		else if (ch == '=' || ch == '>' || ch == '<') { //check for relational operators
 			if (ch == '=') { //check for equals
 				current.lexeme = ch;
@@ -140,7 +141,7 @@ LexTok lexer(ifstream &file) {//takes file reference
 					current.token = "RelOp";
 				}
 				else { //default
-					lexStr += ch;
+					//lexStr += ch;
 					current.lexeme = lexStr;
 					current.token = "RelOp";
 				}
@@ -163,7 +164,7 @@ LexTok lexer(ifstream &file) {//takes file reference
 					current.token = "RelOp";
 				}
 				else { //default
-					lexStr += ch;
+					//lexStr += ch;
 					current.lexeme = lexStr;
 					current.token = "RelOp";
 				}
@@ -174,9 +175,9 @@ LexTok lexer(ifstream &file) {//takes file reference
 		else if (ch == '.' || ch == ',' || ch == ';' || ch == ':' || ch == '(' || ch == ')' || ch == '+' || ch == '-' || ch == '*' || ch == '/') { //check for operator list
 			//lexStr += ch;
 			ch = file.peek();
-			if (lexStr.compare(":") && ch == '=') {
+			if (lexStr.compare(":")==0 && ch == '=') {
 				ch = file.get();
-				lexStr += ch;	
+				lexStr += ch;
 			}
 
 			current.lexeme = lexStr;
@@ -190,7 +191,7 @@ LexTok lexer(ifstream &file) {//takes file reference
 		//returns the current lexeme token back to the program
 		return current;
 	}
-	//covers eof3
+	//covers eof
 	else {
 		current.lexeme = "";
 		current.token = "eof";
