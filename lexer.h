@@ -118,11 +118,11 @@ LexTok lexer(ifstream &file) {//takes file reference from function call
 				ch = file.get();
 				lexStr += ch;
 				current.lexeme = lexStr;
-				current.token = "StringConst";
+				current.token = "StrConst";
 			}
-			else { //if eof, then return lexeme token as eof
-				current.lexeme = "";
-				current.token = "eof";
+			else { //if eof, then return lexeme token as error for token and the rest of the string that has no close quotes
+				current.lexeme = lexStr;
+				current.token = "error";
 			}
 		}
 
